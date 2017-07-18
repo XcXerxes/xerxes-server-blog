@@ -1,19 +1,20 @@
-var mongoose = require('../mongoose')
-var Schema = mongoose.Schema
-var Promise = require('bluebird')
-
-var CategorySchema = new Schema({
-    cate_name: String,
-    cate_order: String,
-    cate_num: Number,
-    cate_date: String,
-    update_date: String,
-    is_delete: Number,
-    timestamp: Number
-})
-
-var Category = mongoose.model('Category', CategorySchema)
-Promise.promisifyAll(Category)
-Promise.promisifyAll(Category.prototype)
-
-module.exports = Category;
+module.exports = (sequelize, DataType) => {
+    return sequelize.define('category', {
+        id: {
+            type: DataType.UUID,
+            primaryKey: true,
+            defaultValue: DataType.UUIDV1,
+            allowNull: false
+        },
+        cate_name: {
+            type: DataType.STRING(32),
+            allowNull: false
+        },
+        cate_sort: {
+            type: DataType.INTEGER(8),
+            allowNull: false
+        }
+    }, {
+            freezeTableName: true
+        })
+}
