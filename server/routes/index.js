@@ -5,8 +5,10 @@ var multipartMiddleware = multipart();
 
 var backendArticle = require('../api/backend-article')
 var backendCategory = require('../api/backend-category')
-var backendUser = require('../api/backend-user')
+var backendAdmin = require('../api/backend-admin')
 var frontendArticle = require('../api/frontend-article')
+
+// 中间件 
 var isAdmin = require('./is-admin')
 var isUser = require('./is-user')
 
@@ -27,7 +29,7 @@ router.post('/backend', (req, res) => {
  */
 
 // 获取文章列表
-router.get('/backend/article/list', /*isAdmin,*/ backendArticle.getList)
+router.get('/backend/article/list', isAdmin, backendArticle.getList)
 
 //获取单篇文章
 router.get('/backend/article/item', isAdmin, backendArticle.getItem)
@@ -66,7 +68,7 @@ router.post('/backend/category/modify', isAdmin, multipartMiddleware, backendCat
 //--------------管理-----------------
 
 // 后台登录
-router.post('/backend/admin/login', multipartMiddleware, backendUser.login)
+router.post('/backend/admin/login', backendAdmin.login)
     // 管理列表
 router.get('/backend/admin/list', isAdmin, backendUser.getList)
     // 获取单个管理员

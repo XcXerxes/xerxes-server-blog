@@ -1,21 +1,16 @@
 var jwt = require('jsonwebtoken');
 
-module.exports = (params, config, req, res) => {
-    var token = params.user;
-    var userid = params.userid;
-    var username = params.username;
+module.exports = (token, config, req, res) => {
     if (token) {
-        jwt.verify(token, config.secret, function(err, decoded) {
-            if (!err && decoded && decoded.id === userid && decoded.username === username) {
+        jwt.verify(token, config.secret.toString(), (err, decoded) => {
+            if (!err) {
                 req.decoded = decoded;
                 next();
             } else {
-                res.cookie(token, '', { maxAge: 0 })
-                res.cookie(userid, '', { maxAge: 0 })
-                res.cookie(username, '', { maxAge: 0 })
+                res.cookie('xc_token', '', { maxAge: 0 })
                 return res.json({
                     code: -500,
-                    message: '登陆验证失败',
+                    message: '登陆验证失败，请重新登录',
                     data: ''
                 })
             }
@@ -23,7 +18,7 @@ module.exports = (params, config, req, res) => {
     } else {
         return res.json({
             code: -500,
-            message: '请先登陆',
+            message: '登录超时，请重新登录',
             data: ''
         })
     }

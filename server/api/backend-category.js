@@ -1,7 +1,7 @@
-var moment = require('moment')
-var mongoose = require('../mongoose')
-var Category = mongoose.model('Category')
+const moment = require('moment')
 const general = require('./general')
+const db = require('../models')
+const assertError = require('../utils/asserts')
 
 /**
  * 管理时，获取分类列表
@@ -9,20 +9,7 @@ const general = require('./general')
  */
 
 exports.getList = (req, res) => {
-    Category.find().sort('-cate_order').exec()
-        .then(result => {
-            res.json({
-                code: 200,
-                data: {
-                    list: result
-                }
-            })
-        }).catch(err => {
-            res.json({
-                code: -200,
-                message: err.toString()
-            })
-        })
+    general.list(req, res, db.category)
 }
 
 /**
@@ -30,62 +17,67 @@ exports.getList = (req, res) => {
  */
 
 exports.getItem = (req, res) => {
-    general.item(req, res, Category)
+    general.item(req, res, db.category)
 }
 
 /**
  * 添加分类
+ * @method insert
  */
 
 exports.insert = (req, res) => {
-    var cate_name = req.body.cate_name
-    var cate_order = req.body.cate_order
+    const {cate_name, cate_order} = req.body
+    if (!cate_name || !cate_order) {
+        return res.json(assertError('参数错误'))
+    }
+
     console.log(cate_name+'cate_name================================')
     console.log(cate_order+'cate_order================================')
-    return Category.createAsync({
+    return db.category.create({
         cate_name,
-        cate_order,
-        creat_date: moment().format('YYYY-MM-DD HH:mm:ss'),
-        update_date: moment().format('YYYY-MM-DD HH:mm:ss'),
-        is_delete: 0,
-        timestamp: moment().format('X')
+        cate_order
     }).then(result => {
         res.json({
             code: 200,
             message: '添加成功',
-            data: result._id
+            data: result.id
         })
+    }).catch(err => {
+        res.json(assertError(err.toString()))
     })
 }
 
 /**
  * 删除分类
+ * @method deleteById
  */
-exports.deletes = (req, res) => {
-    general.deletes(req, res, Category)
+exports.deleteById = (req, res) => {
+    general.deleteItem(req, res, db.category)
 }
 
 /**
- * 编辑
+ * 更新分类
+ * @method update
  * 
  */
 
-exports.recover = (req, res) => {
-    general.recover(req, res, Category)
-}
-
-/**
- * 修改
- */
-
-exports.modify = (req, res) => {
-    var _id = req.body.id;
-    var cate_name = req.body.cate_name;
-    var cate_order = req.body.cate_order;
-
-    general.modify(res, Category, _id, {
+exports.update = (req, res) => {
+    const {id, cate_name, cate_order} = req.body
+    if (!id || !cate_name || !cate_order) {
+        return res.json(assertError('参数错误'))
+    }
+    db.category.update({
         cate_name,
         cate_order,
-        update_date: moment().format('YYYY-MM-DD HH:mm:ss')
+        updatedAt: moment().format('YYYY-MM-DD HH:mm:ss')
+    }, {
+        where: {id}
+    }).then(() => {
+        res.json({
+            code: 200,
+            message: '修改成功'
+        })
+    }).catch(err => {
+        res.json(assertError(err.toString()))
     })
 }

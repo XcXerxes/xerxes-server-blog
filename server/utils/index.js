@@ -1,5 +1,6 @@
 const fs = require("fs")
 
+// 验证 secret 文件是否存在
 const fsExistsSync = path => {
     try {
         fs.accessSync(path, fs.F_OK)
@@ -22,16 +23,29 @@ exports.strLength = str => {
     }
     return realLength;
 }
-const path = './server/config/secret.js';
 exports.creatSecret = () => {
+    let filePath = path.join(__dirname, '..', 'config/secret.json')
     if (!fsExistsSync(path)) {
-        var secretServer = Math.random() * 1000000;
-        var secretClient = Math.random() * 1000000;
-        const secret = `
-            exports.secretServer = '${secretServer}'
-            exports.secretClient = '${secretClient}'
-        `
-        fs.writeFileSync(path, secret)
+        const secret = {
+            secret_token: Math.random() * 1000000
+        }
+        fs.writeFileSync(path, JSON.stringify(secret), 'utf8')
+    }
+}
+
+/**
+ * @method parsePagination  // 解析 limit page sort 
+ */
+exports.parsePagination = ({limit, page, sort}) => {
+    const sortName = (sort && sort.split('-')[0]) || 'createdAt'
+    const sortType = (sort && sort.split('-')[1]) || 'desc'
+    limit = parseInt(limit, 10) || 12
+    page = parseInt(page, 10) || 1
+    const offset = (page - 1) * limit
+    return {
+        limit,
+        offset,
+        order: `${sortName} ${sortType}`
     }
 }
 

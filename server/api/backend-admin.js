@@ -1,16 +1,15 @@
-var md5 = require("md5")
-var fs = require("fs")
-var moment = require("moment")
-var jwt = require("jsonwebtoken")
+const general = require('./general')
+const assertError = require('../utils/asserts')
+const db = require('../models')
+const moment = require("moment")
+const jwt = require("jsonwebtoken")
 
-var mongoose = require('../mongoose')
-var Admin = mongoose.model('Admin')
-var fsExistsSync = require('../utils').fsExistsSync
-var config = require('../config')
-var md5Pre = config.md5Pre
-var secret = config.secretServer
+// 验证secret 是否存在
+require('../utils').creatSecret()
 
-var general = require('./general')
+// 密钥时间戳
+let secret = require('../config/secret.json')['secret_token']
+
 
 /**
  * 获取管理员列表
@@ -22,7 +21,7 @@ exports.getList = (req, res) => {
 }
 
 /**
- * 获取单个管理员
+ * 获取单个用户
  * @methods getItem
  */
 
@@ -36,45 +35,45 @@ exports.getItem = (req, res) => {
  */
 
 exports.login = (req, res) => {
-    var json = {};
-    var username = req.body.password;
-    var password = req.body.password;
+    const {username, password} = req.body
     if (!username || !password) {
-        json = {
-            code: -200,
-            message: '请输入用户名或者密码'
-        }
-        return res.json(json)
+        return res.json(assertError('用户名或者密码不能为空'))
     }
-    Admin.findOneAsync({
-        username,
-        password: md5(md5Pre + password),
-        is_detele: 0
+    db.admin.findOne({
+        username
     }).then(result => {
         if (result) {
-            var id = result._id;
+            if (result.password === password) {
+                db.admin.update({
+                    updatedAt: moment().format('YYYY-MM-DD HH:mm:ss')
+                }, {
+                    where: {username}
+                }).then(() => {
+                    const token = jsw.sign({username: encodeURI(username), password}, secret.toString(), {
+                        expiresIn: 60 * 60 * 3 //过期时间为3个小时
+                    })
+                    // res.cookie()
+                    res.json({
+                        code: 200,
+                        message: '登录成功',
+                        data: token
+                    })
+                })
+            } else {
+                res.json(assertError('密码错误'))
+            }
+           /*  var id = result._id;
             var remember_me = 2592000000
             username = encodeURI(username)
             var token = jsw.sign({ id, username }, secret, { expiresIn: 60 * 60 * 24 * 30 })
             res.cookie('b_user', token, { maxAge: remember_me })
             res.cookie('b_userid', id, { maxAge: remember_me })
-            res.cookie('b_username', username, { maxAge: remember_me })
-            return res.json({
-                code: 200,
-                message: '登录成功',
-                data: token
-            })
+            res.cookie('b_username', username, { maxAge: remember_me }) */
         } else {
-            return res.json({
-                code: -200,
-                message: '用户名或密码错误'
-            })
+            return res.json(assertError('用户名不存在'))
         }
     }).catch(err => {
-        res.json({
-            code: -200,
-            message: err.toString()
-        })
+        res.json(assertError(err.toString()))
     })
 }
 

@@ -1,13 +1,8 @@
-var jwt = require("jsonwebtoken")
-var config = require('../config')
-var secret = config.secretServer
-var checkToken = require('./token')
+const secret = require('../config/secret.json')['secret_token']
+const checkToken = require('./token')
 module.exports = (req, res, next) => {
-    checkToken({
-        user: req.cookies.b_user,
-        userid: req.cookies.b_userid,
-        username: req.cookies.b_username
-    }, {
+    const token = req.body.xc_token || req.param['xc_token'] || req.headers['xc_token']
+    checkToken(token, {
         secret
     }, req, res)
 }

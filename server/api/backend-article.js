@@ -1,8 +1,6 @@
-var moment = require('moment')
-var mongoose = require('../mongoose')
-var Article = mongoose.model('Article')
-var Category = mongoose.model('Category')
+const moment = require('moment')
 const general = require('./general')
+const db =require('../models')
 
 var marked = require('marked')
 var hljs = require('highlight.js')
@@ -16,26 +14,28 @@ marked.setOptions({
 
 /**
  * 管理时，获取文章列表
- * @method 
+ * @method getList
  */
 
 exports.getList = (req, res) => {
-    general.list(req, res, Article)
+    general.list(req, res, db.article)
 }
 
 /**
  * 后台管理 获取单篇文章
+ * @method getItem
  */
 exports.getItem = (req, res) => {
-    general.item(req, res, Article)
+    general.item(req, res, db.article)
 }
 
 /**
  * 发布文章
- * 
+ * @method insert
  */
 
 exports.insert = (req, res) => {
+    const {}
     var categorys = req.body.category
     var content = req.body.content
     var imgName = req.body.imgName

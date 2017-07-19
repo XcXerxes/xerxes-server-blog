@@ -1,40 +1,32 @@
+const utils = require('../utils')
+const assertError = require('../utils/asserts')
+const moment = require('moment')
 /**
  * 通用列表
  * @method list 
  * 
  * @param {[type]} req 
  * @param {[type]} res
- * @param {[type]} mongoDB
+ * @param {[type]} db
  * 
  * @return {[type]}
  */
 
-exports.list = (req, res, mongoDB) => {
-    var limit = parseInt(req.query.limit) || 12;
-    var page = parseInt(req.query.page) || 1;
+exports.list = (req, res, db) => {
+    const { limit, page, sort } = req.query
+    const params = utils.parsePagination({ limit, page, sort })
 
-    var skip = (page - 1) * limit
-    Promise.all([
-        mongoDB.find().sort('-_id').skip(skip).limit(limit).exec(),
-        mongoDB.countAsync()
-    ]).then(result => {
-        var total = result[1];
-        var totalPage = Math.ceil(total / limit)
-        var json = {
-            code: 200,
-            data: {
-                list: result[0],
-                total,
-                hasNext: totalPage > page ? 1 : 0,
-                hasPrev: page > 1 ? 1 : 0
-            }
-        }
-        res.json(json)
-    }).catch(err => {
+    db.findAndCountAll(params).then(result => {
+        const { count, rows } = result
+        const totalPage = Math.ceil(count / params.limit)
         res.json({
-            code: -200,
-            message: err.toString()
+            totalPage,
+            code: 200,
+            data: rows,
+            total: count
         })
+    }).catch(err => {
+        res.json(assertError(err.toString()))
     })
 }
 
@@ -43,53 +35,40 @@ exports.list = (req, res, mongoDB) => {
  * @method item
  * @param {[type]} req 
  * @param {[type]} res
- * @param {[type]} mongoDB
+ * @param {[type]} db
  * 
  * @return {[type]}
  */
 
-exports.item = (req, res, mongoDB) => {
-    var id = req.query.id
+exports.item = (req, res, db) => {
+    var id = req.query.id || req.params.id || req.body.id
     if (!id) {
-        res.json({
-            code: -200,
-            message: '参数错误'
-        })
+        return res.json(assertError('参数错误 (id is undefined!!)'))
     }
-    mongoDB.findOneAsync({ _id: id })
-        .then(result => {
-            res.json({
-                code: 200,
-                data: result
-            })
-        }).catch(err => {
-            res.json({
-                code: -200,
-                message: err.toString()
-            })
+    db.findById(id).then(result => {
+        res.json({
+            code: 200,
+            data: result || {}
         })
+    }).catch(err => {
+        res.json(assertError(err.toString()))
+    })
 }
 
 /**
  * 通用删除
- * @method flagDelete
+ * @method deleteAll
  */
 
-exports.deletes = (req, res, mongoDB) => {
-    var id = req.query.id
-    mongoDB.updateAsync({ _id: id }, { is_delete: 1 })
-        .then(() => {
-            res.json({
-                code: 200,
-                message: '更新成功',
-                data: 'success'
-            })
-        }).catch(err => {
-            res.json({
-                code: -200,
-                message: err.toString()
-            })
+exports.deleteAll = (req, res, db) => {
+    db.destroy().then(() => {
+        res.json({
+            code: 200,
+            message: '删除成功'
         })
+    }).catch(err => {
+        res.json(assertError(err.toString()))
+    })
 }
 
 /**
@@ -98,42 +77,47 @@ exports.deletes = (req, res, mongoDB) => {
  * 
  */
 
-exports.modify = (res, mongoDB, id, data) => {
-    mongoDB.findOneAndUpdateAsync({ _id: id }, data, { new: true })
-        .then(result => {
-            res.json({
-                code: 200,
-                message: '更新成功',
-                data: result
-            })
-        }).catch(err => {
-            res.json({
-                code: -200,
-                message: err.toString()
-            })
+exports.update = (req, res, db) => {
+    const  {id} = req.body
+    if (!id) {
+        return res.json(assertError('参数错误 (id is undefined!!)'))
+    }
+    db.update(Object.assign({},req.body, {
+        updatedAt: moment().format('YYYY-MM-DD HH:mm:ss')
+    }), {
+        where: {id}
+    }).then(result => {
+        res.json({
+            code: 200,
+            message: '修改成功'
         })
+    }).catch(err => {
+        res.json(assertError(err.toString()))
+    })
 }
 
 /**
- * 通用编辑
- * @method recover
- * 
+ * 通用删除单个
+ * @method deleteItem
  * 
  */
 
-exports.recover = (req, res, mongoDB) => {
-    var id = query.id
-    mongoDB.updateAsync({ _id: id }, { is_delete: 0 })
-        .then(() => {
-            res.json({
-                code: 200,
-                message: '更新成功',
-                data: 'success'
-            })
-        }).catch(err => {
-            res.json({
-                code: -200,
-                message: err.toString()
-            })
+exports.deleteItem = (req, res, db) => {
+    const id = req.query.id
+    if(!id) {
+        res.json(assertError('参数错误 (id is undefined!!)'))
+    }
+    db.destroy({
+        where: {
+            id
+        }
+    }).then(() => {
+        res.json({
+            code: 200,
+            message: '删除成功',
+            data: 'success'
         })
+    }).catch(err => {
+        res.json(assertError(err.toString()))
+    })
 }
