@@ -44,12 +44,13 @@ exports.login = (req, res) => {
     }).then(result => {
         if (result) {
             if (result.password === password) {
+                console.log(moment().format('YYYY-MM-DD HH:mm:ss'))
                 db.admin.update({
-                    updatedAt: moment().format('YYYY-MM-DD HH:mm:ss')
+                    updatedAt: new Date()
                 }, {
                     where: {username}
                 }).then(() => {
-                    const token = jsw.sign({username: encodeURI(username), password}, secret.toString(), {
+                    const token = jwt.sign({username: encodeURI(username), password}, secret.toString(), {
                         expiresIn: 60 * 60 * 3 //过期时间为3个小时
                     })
                     // res.cookie()

@@ -1,6 +1,6 @@
 var jwt = require('jsonwebtoken');
 
-module.exports = (token, config, req, res) => {
+module.exports = (token, config, req, res, next) => {
     if (token) {
         jwt.verify(token, config.secret.toString(), (err, decoded) => {
             if (!err) {

@@ -1,6 +1,11 @@
 const moment = require('moment')
 const general = require('./general')
 const db =require('../models')
+const assertError = require('../utils/asserts')
+const utils = require('../utils')
+
+// 关联 category表 和 article表
+db.article.belongsTo(db.category)
 
 var marked = require('marked')
 var hljs = require('highlight.js')
@@ -18,7 +23,25 @@ marked.setOptions({
  */
 
 exports.getList = (req, res) => {
-    general.list(req, res, db.article)
+    general.list(req, res, db.article, {
+        include: [db.category]
+    })
+   /*  const { limit, page, sort } = req.query
+    const params = utils.parsePagination({ limit, page, sort })
+    db.article.findAndCountAll(Object.assign({}, params, {
+        include: [db.category]
+    })).then((result)=>{
+        const {count, rows} = result
+        const totalPage = Math.ceil(count / params.limit)
+        res.json({
+            totalPage,
+            code: 200,
+            data: rows,
+            total: count
+        })
+    }).catch(err => {
+        res.json(assertError(err.toString()))
+    }) */
 }
 
 /**
@@ -35,74 +58,33 @@ exports.getItem = (req, res) => {
  */
 
 exports.insert = (req, res) => {
-    const {}
-    var categorys = req.body.category
-    var content = req.body.content
-    var imgName = req.body.imgName
-    var html = marked(content)
-    var title = req.body.title
-    var imgUrl = req.body.imgUrl
-
-    var arr_category = categorys.split('|')
-    var category = arr_category[0]
-    var category_name = arr_category[1]
-    
-    var data = {
-        title,
-        content,
-        category,
-        imgUrl,
-        category_name,
-        html,
-        visit: 0,
-        like: 0,
-        comment_count: 0,
-        creat_date: moment().format('YYYY-MM-DD HH:mm:ss'),
-        update_date: moment().format('YYYY-MM-DD HH:mm:ss'),
-        is_delete: 0,
-        timestamp: moment().format('X')
+    const {categoryId, title, caption, thumb, html} = req.body
+    if (!categoryId || !title || !caption || !thumb || !html) {
+        return res.json(assertError('参数错误'))
     }
-    Article.createAsync(data)
-        .then(result => {
-            return Category.updateAsync({ _id: category }, { '$inc': { 'cate_num': 1 } })
-                .then(() => {
-                    return res.json({
-                        code: 200,
-                        message: '发布成功',
-                        data: result
-                    })
-                })
-        }).catch(err => {
-            res.json({
-                code: -200,
-                message: err.toString()
-            })
+    db.article.create({
+        title,
+        caption,
+        thumb,
+        html,
+        categoryId
+    }).then(result => {
+        res.json({
+            code: 200,
+            message: '添加成功'
         })
+    }).catch(err => {
+        res.json(assertError(err.toString()))
+    })    
 }
 
 /**
  * 管理文章时，删除文章
- * 
+ * @method deleteById
  */
 
-exports.deletes = (req, res) => {
-    var id = req.query.id
-    Article.updateAsync({ _id: id }, { is_delete: 1 })
-        .then(() => {
-            return Category.updateAsync({ _id: id }, { '$inc': { 'cate_num': -1 } })
-                .then(reslut => {
-                    res.json({
-                        code: 200,
-                        message: '更新成功',
-                        data: result
-                    })
-                })
-        }).catch(err => {
-            res.json({
-                code: -200,
-                message: err.toString()
-            })
-        })
+exports.deleteById = (req, res) => {
+    general.deleteItem(req, res, db.article)
 }
 
 /**
@@ -130,8 +112,39 @@ exports.recover = (req, res) => {
     })
 }
 
+
+
 /**
- * 管理时 编辑文章
+ * 更新文章
+ * @method update
+ * 
+ */
+exports.update = (req, res) => {
+    const {id, categoryId, title, caption, thumb, html} = req.body
+    if (!id || !categoryId || !title || !caption || !thumb || !html) {
+        return res.json(assertError('参数错误'))
+    }
+    db.article.update({
+        categoryId,
+        title,
+        caption,
+        thumb,
+        html,
+        updatedAt: moment().format('YYYY-MM-DD HH:mm:ss')
+    }, {
+        where: {id}
+    }).then(() => {
+        res.json({
+            code: 200,
+            message: '更新成功'
+        })
+    }).catch(err => {
+        res.json(assertError(err.toString()))
+    })
+}
+
+/**
+ * 管理时 更新文章
  */
 
 exports.modify = (req, res) => {

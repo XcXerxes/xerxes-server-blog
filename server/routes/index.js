@@ -1,12 +1,13 @@
 var express = require('express');
 var router = express.Router();
-var multipart = require("connect-multiparty");
-var multipartMiddleware = multipart();
 
+
+// 后端api
 var backendArticle = require('../api/backend-article')
 var backendCategory = require('../api/backend-category')
 var backendAdmin = require('../api/backend-admin')
-var frontendArticle = require('../api/frontend-article')
+
+//var frontendArticle = require('../api/frontend-article')
 
 // 中间件 
 var isAdmin = require('./is-admin')
@@ -25,60 +26,53 @@ router.post('/backend', (req, res) => {
 /**
  * API 
  * =======================后台======================
- *  ------文章------------
  */
+
+// =========================  前台用户 ===============================
+
+// 获取用户列表
+
+// 冻结用户 
+
+
+
+// ========================== 文章 =====================
 
 // 获取文章列表
 router.get('/backend/article/list', isAdmin, backendArticle.getList)
 
 //获取单篇文章
-router.get('/backend/article/item', isAdmin, backendArticle.getItem)
+router.get('/backend/article/:id', isAdmin, backendArticle.getItem)
 
 //发布文章
-router.post('/backend/article/insert',multipartMiddleware, backendArticle.insert)
+router.post('/backend/article',isAdmin, backendArticle.insert)
 
 //删除文章
-router.get('/backend/article/delete', isAdmin, backendArticle.deletes)
-
-//恢复文章
-router.get('/backend/article/recover', isAdmin, backendArticle.recover)
+router.delete('/backend/article/:id', isAdmin, backendArticle.deleteById)
 
 //编辑文章
-router.post('/backend/article/modify', isAdmin, multipartMiddleware, backendArticle.modify)
+router.post('/backend/article/update', isAdmin, backendArticle.update)
 
 //-------------分类--------------
 //获取分类列表
-router.get('/backend/category/list', backendCategory.getList)
+router.get('/backend/cate/list', isAdmin, backendCategory.getList)
 
 //获取单个分类
-router.get('/backend/category/item', backendCategory.getItem)
+router.get('/backend/cate/:id', isAdmin, backendCategory.getItem)
 
 //添加分类
-router.post('/backend/category/insert', multipartMiddleware, backendCategory.insert)
+router.post('/backend/cate', isAdmin, backendCategory.insert)
 
 //删除分类
-router.get('/backend/category/delete', isAdmin, backendCategory.deletes)
-
-//恢复分类
-router.get('/backend/category/recover', isAdmin, backendCategory.recover)
+router.delete('/backend/cate/:id', isAdmin, backendCategory.deleteById)
 
 //编辑分类
-router.post('/backend/category/modify', isAdmin, multipartMiddleware, backendCategory.modify)
+router.post('/backend/cate/update', isAdmin, backendCategory.update)
 
 //--------------管理-----------------
 
 // 后台登录
 router.post('/backend/admin/login', backendAdmin.login)
-    // 管理列表
-router.get('/backend/admin/list', isAdmin, backendUser.getList)
-    // 获取单个管理员
-router.get('/backend/admin/item', isAdmin, backendUser.getItem)
-    // 编辑管理员
-router.post('/backend/admin/modify', isAdmin, multipartMiddleware, backendUser.modify)
-    // 删除管理员
-router.get('/backend/admin/delete', isAdmin, backendUser.deletes)
-    // 恢复管理员
-router.get('/backend/admin/recover', isAdmin, backendUser.recover)
 
 /*// 用户列表
 router.get('/backend/user/list', isAdmin, frontendUser.getList)
@@ -94,12 +88,12 @@ router.get('/backend/user/recover', isAdmin, frontendUser.recover)*/
 // ================= 前台 =================
 // ------ 文章 ------
 // 前台浏览时, 获取文章列表
-router.get('/frontend/article/list', frontendArticle.getList)
+//router.get('/frontend/article/list', frontendArticle.getList)
 // 前台浏览时, 获取单篇文章
-router.get('/frontend/article/item', frontendArticle.getItem)
+//router.get('/frontend/article/item', frontendArticle.getItem)
 
 //获取分类列表
-router.get('/frontend/category/list', backendCategory.getList)
+//router.get('/frontend/category/list', backendCategory.getList)
 
 
 

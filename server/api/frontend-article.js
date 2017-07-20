@@ -1,4 +1,3 @@
-var mongoose = require('../mongoose')
 var Article = mongoose.model('Article')
 //var Like = mongoose.model('Like')
 

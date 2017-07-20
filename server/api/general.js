@@ -13,11 +13,17 @@ const moment = require('moment')
  */
 
 exports.list = (req, res, db) => {
+    const _residueParam = arguments[2]
     const { limit, page, sort } = req.query
-    const params = utils.parsePagination({ limit, page, sort })
-
+    let params = utils.parsePagination({ limit, page, sort })
+    const _residueLength = arguments.length-3
+    if (_residueLength >0 ) {
+        for (let i=_residueLength; i<arguments.length; i++) {
+            params = Object.assign(params, arguments[i])
+        }
+    }
     db.findAndCountAll(params).then(result => {
-        const { count, rows } = result
+        const {count, rows } = result
         const totalPage = Math.ceil(count / params.limit)
         res.json({
             totalPage,
@@ -103,7 +109,7 @@ exports.update = (req, res, db) => {
  */
 
 exports.deleteItem = (req, res, db) => {
-    const id = req.query.id
+    const id = req.query.id || req.params.id || req.body.id
     if(!id) {
         res.json(assertError('参数错误 (id is undefined!!)'))
     }
