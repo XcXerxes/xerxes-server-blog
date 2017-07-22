@@ -40,7 +40,9 @@ exports.login = (req, res) => {
         return res.json(assertError('用户名或者密码不能为空'))
     }
     db.admin.findOne({
-        username
+        where: {
+            username
+        }
     }).then(result => {
         if (result) {
             if (result.password === password) {

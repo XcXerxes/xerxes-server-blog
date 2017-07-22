@@ -36,7 +36,7 @@ app.all('*', function(req, res, next) {
   next()
 })
 
-app.use('/', routes)
+app.use('/api', routes)
 
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
@@ -49,7 +49,7 @@ app.use(function(err, req, res) {
     res.send(err.message)
 })
 
-var port = 8888
+var port = process.env.PORT || 8888
 app.listen(port, function(err) {
     if (err) {
         console.log(err)

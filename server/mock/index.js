@@ -8,10 +8,10 @@ db.category.sync().then(() => {
   })
 })
 db.comment.sync()
-/* db.admin.sync().then(()=> {
+db.admin.sync().then(()=> {
   db.admin.create({
     username: 'admin',
-    password: '7a57a5a743894a0e',
+    password: '21232f297a57a5a743894a0e4a801fc3',
     role: 'admin'
   })
-}) */
+})
