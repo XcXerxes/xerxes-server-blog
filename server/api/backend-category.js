@@ -13,6 +13,15 @@ exports.getList = (req, res) => {
 }
 
 /**
+ * 分类所有
+ * @method getAll
+ */
+
+ exports.getAll = (req, res) => {
+     general.all(req, res, db.category)
+ }
+
+/**
  * 获取单个分类
  */
 
@@ -26,16 +35,16 @@ exports.getItem = (req, res) => {
  */
 
 exports.insert = (req, res) => {
-    const {cate_name, cate_order} = req.body
-    if (!cate_name || !cate_order) {
+    const {cate_name, cate_sort} = req.body
+    if (!cate_name || !cate_sort) {
         return res.json(assertError('参数错误'))
     }
 
     console.log(cate_name+'cate_name================================')
-    console.log(cate_order+'cate_order================================')
+    console.log(cate_sort+'cate_sort================================')
     return db.category.create({
         cate_name,
-        cate_order
+        cate_sort
     }).then(result => {
         res.json({
             code: 200,

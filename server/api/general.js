@@ -1,6 +1,24 @@
 const utils = require('../utils')
 const assertError = require('../utils/asserts')
 const moment = require('moment')
+
+/**
+ * 通用所有
+ * @method all
+ */
+
+ exports.all = (req, res, db) => {
+     db.findAll().then(result => {
+         res.json({
+             code: 200,
+             message: 'success',
+             data: result
+         })
+     }).catch(err => {
+        res.json(assertError(err.toString()))
+     })
+ }
+
 /**
  * 通用列表
  * @method list 

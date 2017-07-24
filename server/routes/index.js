@@ -57,6 +57,9 @@ router.post('/backend/article/update', isAdmin, backendArticle.update)
 //获取分类列表
 router.get('/backend/cate/list', isAdmin, backendCategory.getList)
 
+// 获取所有分类
+router.get('/bankend/cate/all', isAdmin, backendCategory.getAll)
+
 //获取单个分类
 router.get('/backend/cate/:id', isAdmin, backendCategory.getItem)
 
