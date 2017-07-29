@@ -6,12 +6,16 @@ var router = express.Router();
 var backendArticle = require('../api/backend-article')
 var backendCategory = require('../api/backend-category')
 var backendAdmin = require('../api/backend-admin')
+var backendUpload = require('../api/bankend-upload')
 
 //var frontendArticle = require('../api/frontend-article')
 
 // 中间件 
 var isAdmin = require('./is-admin')
 var isUser = require('./is-user')
+
+// 上传图片 middle
+var middleUpload = require('./upload-middle')
 
 //添加管理员
 
@@ -71,6 +75,10 @@ router.delete('/backend/cate/:id', isAdmin, backendCategory.deleteById)
 
 //编辑分类
 router.post('/backend/cate/update', isAdmin, backendCategory.update)
+
+
+//-------------- 上传图片 ---------------
+router.post('/backend/upload', isAdmin, middleUpload, backendUpload)
 
 //--------------管理-----------------
 

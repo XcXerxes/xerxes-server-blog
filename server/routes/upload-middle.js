@@ -25,3 +25,11 @@ const path = require('path')
     })
   }
  }
+
+ const middleUpload = multer({
+   storage: new StorageDir({
+     dirPath: path.join(__dirname, '../../', 'static/images')
+   }).diskStorage()
+ }).array('bankend', 3)
+
+ module.exports = middleUpload
