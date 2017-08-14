@@ -62,7 +62,7 @@ router.post('/backend/article/update', isAdmin, backendArticle.update)
 router.get('/backend/cate/list', isAdmin, backendCategory.getList)
 
 // 获取所有分类
-router.get('/bankend/cate/all', isAdmin, backendCategory.getAll)
+router.get('/backend/cate/all', isAdmin, backendCategory.getAll)
 
 //获取单个分类
 router.get('/backend/cate/:id', isAdmin, backendCategory.getItem)

@@ -31,15 +31,8 @@ const moment = require('moment')
  */
 
 exports.list = (req, res, db) => {
-    const _residueParam = arguments[2]
     const { limit, page, sort } = req.query
     let params = utils.parsePagination({ limit, page, sort })
-    const _residueLength = arguments.length-3
-    if (_residueLength >0 ) {
-        for (let i=_residueLength; i<arguments.length; i++) {
-            params = Object.assign(params, arguments[i])
-        }
-    }
     db.findAndCountAll(params).then(result => {
         const {count, rows } = result
         const totalPage = Math.ceil(count / params.limit)

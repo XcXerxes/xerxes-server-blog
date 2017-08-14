@@ -1,6 +1,6 @@
 const moment = require('moment')
 const general = require('./general')
-const db =require('../models')
+const db = require('../models')
 const assertError = require('../utils/asserts')
 const utils = require('../utils')
 
@@ -9,7 +9,7 @@ db.article.belongsTo(db.category)
 
 var marked = require('marked')
 var hljs = require('highlight.js')
-    // code  高亮
+// code  高亮
 marked.setOptions({
     highlight(code) {
         return hljs.highlightAuto(code).value
@@ -23,15 +23,13 @@ marked.setOptions({
  */
 
 exports.getList = (req, res) => {
-    general.list(req, res, db.article, {
-        include: [db.category]
-    })
-   /*  const { limit, page, sort } = req.query
-    const params = utils.parsePagination({ limit, page, sort })
-    db.article.findAndCountAll(Object.assign({}, params, {
-        include: [db.category]
-    })).then((result)=>{
-        const {count, rows} = result
+    const { limit, page, sort } = req.query
+    let params = utils.parsePagination({ limit, page, sort })
+    db.article.findAndCountAll(Object.assign(params, {
+        include: [db.category],
+        attributes: ['id', 'categoryId', 'title', 'caption', 'visit', 'like', 'createdAt', 'comment_count']
+    })).then(result => {
+        const { count, rows } = result
         const totalPage = Math.ceil(count / params.limit)
         res.json({
             totalPage,
@@ -41,7 +39,7 @@ exports.getList = (req, res) => {
         })
     }).catch(err => {
         res.json(assertError(err.toString()))
-    }) */
+    })
 }
 
 /**
@@ -58,7 +56,7 @@ exports.getItem = (req, res) => {
  */
 
 exports.insert = (req, res) => {
-    const {categoryId, title, caption, thumb, html} = req.body
+    const { categoryId, title, caption, thumb, html } = req.body
     if (!categoryId || !title || !caption || !thumb || !html) {
         return res.json(assertError('参数错误'))
     }
@@ -66,7 +64,7 @@ exports.insert = (req, res) => {
         title,
         caption,
         thumb,
-        html,
+        html: marked(html),
         categoryId
     }).then(result => {
         res.json({
@@ -75,7 +73,7 @@ exports.insert = (req, res) => {
         })
     }).catch(err => {
         res.json(assertError(err.toString()))
-    })    
+    })
 }
 
 /**
@@ -120,7 +118,7 @@ exports.recover = (req, res) => {
  * 
  */
 exports.update = (req, res) => {
-    const {id, categoryId, title, caption, thumb, html} = req.body
+    const { id, categoryId, title, caption, thumb, html } = req.body
     if (!id || !categoryId || !title || !caption || !thumb || !html) {
         return res.json(assertError('参数错误'))
     }
@@ -132,15 +130,15 @@ exports.update = (req, res) => {
         html,
         updatedAt: moment().format('YYYY-MM-DD HH:mm:ss')
     }, {
-        where: {id}
-    }).then(() => {
-        res.json({
-            code: 200,
-            message: '更新成功'
+            where: { id }
+        }).then(() => {
+            res.json({
+                code: 200,
+                message: '更新成功'
+            })
+        }).catch(err => {
+            res.json(assertError(err.toString()))
         })
-    }).catch(err => {
-        res.json(assertError(err.toString()))
-    })
 }
 
 /**
