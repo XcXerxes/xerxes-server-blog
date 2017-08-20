@@ -1,6 +1,14 @@
 const db = require('../models')
 const assertError = require('../utils/asserts')
 const general = require('./general')
+const moment = require('moment')
+const jwt = require('jsonwebtoken')
+
+// 验证secret 是否存在
+require('../utils').creatSecret()
+
+// 密钥时间戳
+let secret = require('../config/secret.json')['secret_token']
 
 /**
  * 注册账号接口
@@ -9,8 +17,8 @@ const general = require('./general')
 
 exports.register = (req, res) => {
   const { username, password, xc_email } = req.body
-  if (!username || !password || !xc_email) {
-    return assertError('用户名或者密码或者邮箱不能为空！')
+   if (!username || !password || !xc_email) {
+    return res.json(assertError('用户名或者密码或者邮箱不能为空！'))
   }
   db.frontUser.create({
     username,
@@ -35,20 +43,44 @@ exports.register = (req, res) => {
  */
 exports.login = (req, res) => {
   const { name, password } = req.body
-  if (!name || password) {
-    res.json(assertError('用户名或者密码错误'))
+  if (!name || !password) {
+    res.json(assertError('用户名或者密码不能为空 '))
   }
-  db.frontUser.find({
+  db.frontUser.findOne({
     where: {
       $or: [
-        { username },
-        { xc_email: username }
+        { username: name },
+        { xc_email: name }
       ]
     }
   }).then(result => {
     if (result) {
       if (result.password === password) {
-
+        db.frontUser.update({
+          updatedAt: new Date()
+        }, {
+          where: {
+            username: result.username
+          }
+        }).then(() => {
+          const remember_me =  3600000  // 过期时间 1个小时
+          const token = jwt.sign({
+            id: result.id,
+            username: encodeURI(result.username)
+          }, secret.toString(), {
+            expiresIn: 60 * 60 * 3 //过期时间为3个小时
+          })
+          res.cookie('user', token, {maxAge: remember_me})
+          res.cookie('userid', result.id, {maxAge: remember_me})
+          res.cookie('username', result.username, {maxAge: remember_me})
+          res.json({
+            code: 200,
+            message: '登录成功',
+            data: {
+              id: result.id
+            }
+          })
+        })
       } else {
         return res.json(assertError('密码错误'))
       }

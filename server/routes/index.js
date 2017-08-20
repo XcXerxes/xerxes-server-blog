@@ -8,6 +8,8 @@ var backendCategory = require('../api/backend-category')
 var backendAdmin = require('../api/backend-admin')
 var backendUpload = require('../api/bankend-upload')
 
+// 前端api
+const frontendUser = require('../api/frontend-user')
 //var frontendArticle = require('../api/frontend-article')
 
 // 中间件 
@@ -97,6 +99,13 @@ router.get('/backend/user/delete', isAdmin, frontendUser.deletes)
 router.get('/backend/user/recover', isAdmin, frontendUser.recover)*/
 
 // ================= 前台 =================
+/**
+ *  用户
+ */
+// ------------ 注册用户 ------------
+router.post('/frontend/user/regist', frontendUser.register)
+router.post('/frontend/user/login', frontendUser.login)
+// 
 // ------ 文章 ------
 // 前台浏览时, 获取文章列表
 //router.get('/frontend/article/list', frontendArticle.getList)

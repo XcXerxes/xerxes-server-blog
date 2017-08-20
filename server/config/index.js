@@ -6,11 +6,13 @@ const secret = require('./secret.js')
 exports.md5Pre = "!@#$%(*&^)"
 exports.secretServer = secret.secretServer
 exports.secretClient = secret.secretServer */
-
+const isMac = /^darwin/.test(process.platform)
+const isWin = /^win/.test(process.platform)
+console.log("process.platform: "+ process.platform)
 module.exports = {
   database: 'xcxerxes_blog',
   username: 'root',
-  password: '1234',
+  password: isMac ? '' : '1234',
   host: 'localhost',
   dialect: 'mysql',
   timezone: '+08:00',

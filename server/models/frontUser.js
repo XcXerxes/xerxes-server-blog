@@ -15,7 +15,7 @@ module.exports = (sequelize, DataType) => {
       allowNull: false
     },
     xc_email: {
-      type: DataType.STRING(16),
+      type: DataType.STRING(32),
       allowNull: false
     }
   }, {
