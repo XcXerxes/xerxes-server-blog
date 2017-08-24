@@ -11,7 +11,7 @@ var backendUpload = require('../api/bankend-upload')
 // 前端api
 const frontendUser = require('../api/frontend-user')
 const frontendCategory = require('../api/frontend-category')
-//var frontendArticle = require('../api/frontend-article')
+const frontendArticle = require('../api/frontend-article')
 
 // 中间件 
 var isAdmin = require('./is-admin')
@@ -109,12 +109,20 @@ router.post('/frontend/user/login', frontendUser.login)
 // 
 // ------ 文章 ------
 // 前台浏览时, 获取文章列表
-//router.get('/frontend/article/list', frontendArticle.getList)
-// 前台浏览时, 获取单篇文章
-//router.get('/frontend/article/item', frontendArticle.getItem)
+router.get('/frontend/article/list', frontendArticle.getList)
 
+// 前台浏览时， 根据分类获取列表
+router.get('/frontend/article/list/:id', frontendArticle.getListByCateId)
+
+// 前台浏览时, 获取单篇文章
+router.get('/frontend/article/:id', frontendArticle.getItem)
+
+
+// ------- 分类 --------
 //获取分类列表
 router.get('/frontend/cate/list', frontendCategory.list)
+
+
 
 
 
