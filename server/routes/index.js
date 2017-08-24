@@ -10,6 +10,7 @@ var backendUpload = require('../api/bankend-upload')
 
 // 前端api
 const frontendUser = require('../api/frontend-user')
+const frontendCategory = require('../api/frontend-category')
 //var frontendArticle = require('../api/frontend-article')
 
 // 中间件 
@@ -113,7 +114,7 @@ router.post('/frontend/user/login', frontendUser.login)
 //router.get('/frontend/article/item', frontendArticle.getItem)
 
 //获取分类列表
-//router.get('/frontend/category/list', backendCategory.getList)
+router.get('/frontend/cate/list', frontendCategory.list)
 
 
 

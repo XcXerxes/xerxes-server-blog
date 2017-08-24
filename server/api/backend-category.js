@@ -71,13 +71,13 @@ exports.deleteById = (req, res) => {
  */
 
 exports.update = (req, res) => {
-    const {id, cate_name, cate_order} = req.body
-    if (!id || !cate_name || !cate_order) {
+    const {id, cate_name, cate_sort} = req.body
+    if (!id || !cate_name || !cate_sort) {
         return res.json(assertError('参数错误'))
     }
     db.category.update({
         cate_name,
-        cate_order,
+        cate_sort,
         updatedAt: moment().format('YYYY-MM-DD HH:mm:ss')
     }, {
         where: {id}
