@@ -111,9 +111,6 @@ router.post('/frontend/user/login', frontendUser.login)
 // 前台浏览时, 获取文章列表
 router.get('/frontend/article/list', frontendArticle.getList)
 
-// 前台浏览时， 根据分类获取列表
-router.get('/frontend/article/list/:id', frontendArticle.getListByCateId)
-
 // 前台浏览时, 获取单篇文章
 router.get('/frontend/article/:id', frontendArticle.getItem)
 

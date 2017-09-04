@@ -1,34 +1,33 @@
 const db = require('../models')
 const general = require('./general')
 const assertError = require('../utils/asserts')
-//var Like = mongoose.model('Like')
 
-/**
- * 前台浏览时，获取文章列表
- * @getList
- */
-
-exports.getList = (req,res) =>{
-  general.list(req, res, db.article) 
-}
+// 关联分类表
+db.article.belongsTo(db.category)
 
 /**
  *  前台浏览时， 根据分类id获取 文章列表
  * @method getListByCateId
  */
-exports.getListByCateId = (req, res) => {
-  const {page, limit, categoryId} = req.query
+exports.getList = (req, res) => {
+  let {page, limit, categoryId} = req.query
   limit = parseInt(limit, 10) || 12
-  page = parseInt(limit, 10) || 1
+  page = parseInt(page, 10) || 1
   const offset = (page-1) * limit
-  db.article.findAndCountAll({
+  console.log('offset==='+ offset)
+  const params = (categoryId && categoryId !== 'all_001') ? {
     where: {
       categoryId
     },
     attributes: ['id', 'title', 'caption', 'visit', 'like', 'thumb'],
     limit,
     offset
-  }).then(result => {
+  } : {
+    attributes: ['id', 'title', 'caption', 'visit', 'like', 'thumb'],
+    limit,
+    offset
+  }
+  db.article.findAndCountAll(params).then(result => {
     const {count, rows} = result
     res.json({
       code: 200,
@@ -46,5 +45,23 @@ exports.getListByCateId = (req, res) => {
  */
 
  exports.getItem = (req, res) => {
-   general.item(req, res, db.article)
+   const id = req.query.id || req.params.id
+   if (!id) {
+     return res.json(assertError('参数错误'))
+   }
+   db.article.findOne({
+     include: [db.category],
+     where: {
+       id
+     },
+     attributes: ['id', 'title', 'categoryId', 'html', 'createdAt', 'updatedAt']
+   }).then(result => {
+     res.json({
+       code: 200,
+       message: 'SUCCESS',
+       data: result || {}
+     })
+   }).catch(err => {
+     res.json(assertError(err.toString()))
+   })
  }
