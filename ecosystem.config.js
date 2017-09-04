@@ -35,7 +35,7 @@ module.exports = {
       ref  : 'origin/master',
       repo : 'git@github.com:XcXerxes/xerxes-server-blog.git',
       path : '/home/xcxerxes/www/production',
-      'post-deploy' : 'yarn install && pm2 reload ecosystem.config.js --env production'
+      'post-deploy' : 'npm install && pm2 reload ecosystem.config.js --env production'
     },
     dev : {
       user : 'xcxerxes',
