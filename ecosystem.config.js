@@ -7,8 +7,8 @@ module.exports = {
 
     // First application
     {
-      name      : 'API',
-      script    : 'server.js',
+      name      : 'server-blog',
+      script    : './server.js',
       env: {
         COMMON_VARIABLE: 'true'
       },
