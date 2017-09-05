@@ -49,7 +49,7 @@ app.use(function(err, req, res) {
     res.send(err.message)
 })
 
-var port = process.env.PORT || 80
+var port = process.env.PORT || 3000
 app.listen(port, function(err) {
     if (err) {
         console.log(err)
