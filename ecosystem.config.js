@@ -30,20 +30,20 @@ module.exports = {
    */
   deploy : {
     production : {
-      user : 'xcxerxes',
+      user : 'root',
       host : '39.108.97.20',
       ref  : 'origin/master',
       repo : 'git@github.com:XcXerxes/xerxes-server-blog.git',
-      path : '/home/xcxerxes/www/production',
-      'post-deploy' : 'sudo npm install && sudo pm2 reload ecosystem.config.js --env production'
+      path : '/root/www/production',
+      'post-deploy' : 'npm install && pm2 reload ecosystem.config.js --env production'
     },
     dev : {
-      user : 'xcxerxes',
+      user : 'root',
       host : '39.108.97.20',
       ref  : 'origin/master',
       repo : 'git@github.com:XcXerxes/xerxes-server-blog.git',
-      path : '/home/xcxerxes/www/development',
-      'post-deploy' : 'sudo npm install && sudo pm2 reload ecosystem.config.js --env dev',
+      path : '/root/www/development',
+      'post-deploy' : 'npm install && pm2 reload ecosystem.config.js --env dev',
       env  : {
         NODE_ENV: 'dev'
       }
