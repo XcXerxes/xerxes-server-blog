@@ -103,8 +103,9 @@ router.get('/backend/user/recover', isAdmin, frontendUser.recover)*/
 /**
  *  用户
  */
-// ------------ 注册用户 ------------
+// ------------ 注册登录用户 ------------
 router.post('/frontend/user/regist', frontendUser.register)
+router.post('/frontend/user/check', frontendUser.checkUserName)
 router.post('/frontend/user/login', frontendUser.login)
 // 
 // ------ 文章 ------

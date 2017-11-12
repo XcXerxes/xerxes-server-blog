@@ -3,7 +3,7 @@ var path = require("path");
 var logger = require("morgan");
 var cookieParser = require("cookie-parser")
 var bodyParser = require("body-parser")
-
+const production = process.env.NODE_ENV
 //require mogngoose mode
 /* require('./server/models/admin')
 require('./server/models/article')
@@ -29,12 +29,12 @@ app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'static')))
 
 
-app.all('*', function(req, res, next) {
+/* app.all('*', function(req, res, next) {
   res.header('Access-Control-Allow-Origin', '*')
   res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS')
   res.header('Access-Control-Allow-Headers', 'X-Requested-With, content-type, Authorization, xc_token')
   next()
-})
+}) */
 
 app.use('/api', routes)
 
@@ -49,7 +49,7 @@ app.use(function(err, req, res) {
     res.send(err.message)
 })
 
-var port = process.env.PORT || 8888
+var port = production ? 80 : 8888
 app.listen(port, function(err) {
     if (err) {
         console.log(err)

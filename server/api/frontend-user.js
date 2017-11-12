@@ -11,6 +11,37 @@ require('../utils').creatSecret()
 let secret = require('../config/secret.json')['secret_token']
 
 /**
+ * 异步验证用户名
+ * @method checkUserName
+ */
+exports.checkUserName = (req, res) => {
+  const username = req.query.username || req.body.username || req.params.username
+  db.frontUser.findOne({
+    where: {
+      username
+    }
+  }).then(data => {
+    if (data) {
+      return res.json({
+        code: 200,
+        message: '已存在',
+        data: {
+          id: data.id
+        }
+      })
+    } else {
+      return res.json({
+        code: -404,
+        message: '不存在',
+        data: ''
+      })
+    }
+  }).catch(err => {
+    return res.json(assertError(err.toString()))
+  })
+}
+
+/**
  * 注册账号接口
  * @method register 
  */
@@ -42,15 +73,15 @@ exports.register = (req, res) => {
  * @method login
  */
 exports.login = (req, res) => {
-  const { name, password } = req.body
-  if (!name || !password) {
+  const { username, password } = req.body
+  if (!username || !password) {
     res.json(assertError('用户名或者密码不能为空 '))
   }
   db.frontUser.findOne({
     where: {
       $or: [
-        { username: name },
-        { xc_email: name }
+        { username },
+        { xc_email: username }
       ]
     }
   }).then(result => {
@@ -71,8 +102,8 @@ exports.login = (req, res) => {
             expiresIn: 60 * 60 * 3 //过期时间为3个小时
           })
           res.cookie('user', token, {maxAge: remember_me})
-          res.cookie('userid', result.id, {maxAge: remember_me})
-          res.cookie('username', result.username, {maxAge: remember_me})
+          res.cookie('userid', result.id, {maxAge: remember_me}, {httpOnly: false})
+          res.cookie('username', result.username, {maxAge: remember_me}, {httpOnly: false})
           res.json({
             code: 200,
             message: '登录成功',
