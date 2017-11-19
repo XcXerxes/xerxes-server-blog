@@ -10,8 +10,6 @@ require('./server/models/article')
 require('./server/models/category')
 require('./server/models/user') */
 
-
-
 //require api routes
 var routes = require('./server/routes')
 
@@ -49,7 +47,7 @@ app.use(function(err, req, res) {
     res.send(err.message)
 })
 
-var port = production ? 80 : 8888
+var port = production ? 8080 : 8888
 app.listen(port, function(err) {
     if (err) {
         console.log(err)
