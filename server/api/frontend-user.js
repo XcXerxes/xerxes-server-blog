@@ -102,11 +102,9 @@ exports.login = (req, res) => {
             expiresIn: 60 * 60 * 3 //过期时间为3个小时
           })
           console.log(res.cookie)
-          res.cookie('user', token, {maxAge: remember_me})
-          res.cookie('name', 'tobi');
-          res.cookie('userid', result.id, {maxAge: remember_me}, {httpOnly: false})
-          res.cookie('username', result.username, {maxAge: remember_me}, {httpOnly: false})
-          console.log('成功设置cookie!!!!!!!!!!!!!!!!!!!!')
+          res.cookie('token', token, {maxAge: remember_me})
+          res.cookie('login_userid', result.id, {maxAge: remember_me})
+          res.cookie('login_username', result.username, {maxAge: remember_me})
           res.json({
             code: 200,
             message: '登录成功',

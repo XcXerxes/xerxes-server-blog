@@ -47,7 +47,7 @@ app.use(function(err, req, res) {
     res.send(err.message)
 })
 
-var port = production ? 8080 : 8888
+var port = production ? 8080 : 9999
 app.listen(port, function(err) {
     if (err) {
         console.log(err)
