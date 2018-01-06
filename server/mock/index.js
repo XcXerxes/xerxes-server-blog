@@ -9,10 +9,13 @@ db.category.sync().then(() => {
 })
 db.comment.sync()
 db.admin.sync().then(()=> {
-  /*db.admin.create({
+  /* db.admin.create({
     username: 'admin',
-    password: '21232f297a57a5a743894a0e4a801fc3',
+    password: '123456',
+    confirm_password: '123456',
+    client_ip: '10.10.10.2',
+    avatar: 'avatar-pink',
     role: 'admin'
-  })*/
+  }) */
 })
 db.frontUser.sync()

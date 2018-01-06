@@ -8,10 +8,34 @@ module.exports = (sequelize, DataType) => {
     },
     username: {
       type: DataType.STRING(16),
-      allowNull: false
+      allowNull: false,
+      validate: {
+        len: [3, 15]
+      }
     },
     password: {
-      type: DataType.STRING(64),
+      type: DataType.STRING(32),
+      allowNull: false,
+      validate: {
+        len: [6, 15]
+      }
+    },
+/*     confirm_password: {
+      type: DataType.STRING(32),
+      allowNull: false,
+      validate: {
+        len: [6, 15]
+      }
+    }, */
+    client_ip: {
+      type: DataType.STRING,
+      allowNull: false,
+      validate: {
+        isIP: true
+      }
+    },
+    avatar: {
+      type: DataType.STRING(16),
       allowNull: false
     },
     xc_email: {
@@ -19,6 +43,12 @@ module.exports = (sequelize, DataType) => {
       allowNull: false
     }
   }, {
-    freezeTableName: true
+    freezeTableName: true,
+    indexes: [
+      {
+        unique: true,
+        fields: ['username', 'xc_email']
+      }
+    ]
   })
 }

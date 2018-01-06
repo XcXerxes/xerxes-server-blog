@@ -3,6 +3,7 @@ const assertError = require('../utils/asserts')
 const general = require('./general')
 const moment = require('moment')
 const jwt = require('jsonwebtoken')
+const utils = require('../utils')
 
 // 验证secret 是否存在
 require('../utils').creatSecret()
@@ -47,14 +48,17 @@ exports.checkUserName = (req, res) => {
  */
 
 exports.register = (req, res) => {
-  const { username, password, xc_email } = req.body
-   if (!username || !password || !xc_email) {
+  const { username, password, xc_email} = req.body
+   if (!username || !password || !xc_email ) {
     return res.json(assertError('用户名或者密码或者邮箱不能为空！'))
   }
+  const client_ip = req.ip.split(':')[req.ip.split(':').length - 1]
   db.frontUser.create({
     username,
     password,
-    xc_email
+    xc_email,
+    client_ip,
+    avatar: utils.randomColor()
   }).then(result => {
     res.json({
       code: 200,
@@ -88,7 +92,7 @@ exports.login = (req, res) => {
     if (result) {
       if (result.password === password) {
         db.frontUser.update({
-          updatedAt: new Date()
+          updatedAt: Date.now()
         }, {
           where: {
             username: result.username
@@ -101,7 +105,6 @@ exports.login = (req, res) => {
           }, secret.toString(), {
             expiresIn: 60 * 60 * 3 //过期时间为3个小时
           })
-          console.log(res.cookie)
           res.cookie('token', token, {maxAge: remember_me})
           res.cookie('login_userid', result.id, {maxAge: remember_me})
           res.cookie('login_username', result.username, {maxAge: remember_me})
