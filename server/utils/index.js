@@ -55,7 +55,7 @@ exports.parsePagination = ({ limit, page, sort }) => {
 
 const getColorArray = () => {
     return ['avatar-red', 'avatar-pink', 'avatar-purple', 'avatar-deep-purple',
-        'avatar-indigo', 'avatar-blue', 'light-blue', 'avatar-cyan', 'avatar-teal', 'avatar-green'
+        'avatar-indigo', 'avatar-blue', 'avatar-light-blue', 'avatar-cyan', 'avatar-teal', 'avatar-green'
     ]
 }
 exports.randomColor = () => {

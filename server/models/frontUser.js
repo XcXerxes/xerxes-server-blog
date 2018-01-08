@@ -35,7 +35,7 @@ module.exports = (sequelize, DataType) => {
       }
     },
     avatar: {
-      type: DataType.STRING(16),
+      type: DataType.STRING(32),
       allowNull: false
     },
     xc_email: {

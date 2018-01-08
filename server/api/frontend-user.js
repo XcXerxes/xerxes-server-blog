@@ -108,6 +108,7 @@ exports.login = (req, res) => {
           res.cookie('token', token, {maxAge: remember_me})
           res.cookie('login_userid', result.id, {maxAge: remember_me})
           res.cookie('login_username', result.username, {maxAge: remember_me})
+          res.cookie('login_avatar', result.avatar, {maxAge: remember_me})
           res.json({
             code: 200,
             message: '登录成功',
