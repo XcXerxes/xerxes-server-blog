@@ -7,7 +7,6 @@ module.exports = (token, config, req, res, next) => {
                 req.decoded = decoded;
                 next();
             } else {
-                res.cookie('xc_token', '', { maxAge: 0 })
                 return res.json({
                     code: -500,
                     message: '登陆验证失败，请重新登录',

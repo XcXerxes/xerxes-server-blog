@@ -107,6 +107,8 @@ router.get('/backend/user/recover', isAdmin, frontendUser.recover)*/
 router.post('/frontend/user/regist', frontendUser.register)
 router.post('/frontend/user/check', frontendUser.checkUserName)
 router.post('/frontend/user/login', frontendUser.login)
+// ------------ 登出 -------------
+router.post('/frontend/user/logout', frontendUser.logout)
 // 
 // ------ 文章 ------
 // 前台浏览时, 获取文章列表

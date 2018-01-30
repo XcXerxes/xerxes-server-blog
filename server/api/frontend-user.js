@@ -103,7 +103,7 @@ exports.login = (req, res) => {
             id: result.id,
             username: encodeURI(result.username)
           }, secret.toString(), {
-            expiresIn: 60 * 60 * 3 //过期时间为3个小时
+            expiresIn: '3h'//过期时间为3个小时
           })
           res.cookie('token', token, {maxAge: remember_me})
           res.cookie('login_userid', result.id, {maxAge: remember_me})
@@ -123,6 +123,20 @@ exports.login = (req, res) => {
     } else {
        return res.json(assertError('用户名不存在'))
     }
+  })
+}
+
+/**
+ * 登出
+ */
+exports.logout = (req, res) => {
+  res.clearCookie('token', {maxAge: new Date(0)})
+  res.clearCookie('login_userid', {maxAge: new Date(0)})
+  res.clearCookie('login_username', {maxAge: new Date(0)})
+  res.clearCookie('login_avatar', {maxAge: new Date(0)})
+  res.json({
+    code: 200,
+    message: '清除成功'
   })
 }
 
