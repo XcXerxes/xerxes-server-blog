@@ -4,8 +4,9 @@
     "main": "index.js",
     "license": "MIT",
     "scripts": {
-        "start": "supervisor server",
-        "mock": "node server/mock"
+        "start": "NODE_ENV='development' supervisor server",
+        "mock": "node server/mock",
+        "build": "NODE_ENV='production' node app.js"
     },
     "dependencies": {
         "eslint": "^3.17.1",

@@ -7,21 +7,15 @@ module.exports = {
 
     // First application
     {
-      name      : 'server-blog',
-      script    : './server.js',
+      name      : 'API',
+      script    : 'server.js',
       env: {
         COMMON_VARIABLE: 'true'
       },
       env_production : {
         NODE_ENV: 'production'
       }
-    },
-
-    // Second application
-    /* {
-      name      : 'WEB',
-      script    : 'web.js'
-    } */
+    }
   ],
 
   /**
@@ -34,15 +28,15 @@ module.exports = {
       host : '39.108.97.20',
       ref  : 'origin/master',
       repo : 'git@github.com:XcXerxes/xerxes-server-blog.git',
-      path : '/root/www/production',
-      'post-deploy' : 'npm install && pm2 startOrRestart ecosystem.config.js --env production'
+      path : '/var/www/xcxerxes',
+      'post-deploy' : 'npm install && pm2 reload ecosystem.config.js --env production'
     },
     dev : {
       user : 'root',
       host : '39.108.97.20',
       ref  : 'origin/master',
       repo : 'git@github.com:XcXerxes/xerxes-server-blog.git',
-      path : '/root/www/development',
+      path : '/var/www/xcxerxes',
       'post-deploy' : 'npm install && pm2 reload ecosystem.config.js --env dev',
       env  : {
         NODE_ENV: 'dev'
