@@ -6,7 +6,8 @@
     "scripts": {
         "start": "NODE_ENV='development' supervisor server",
         "mock": "node server/mock",
-        "build": "NODE_ENV='production' node app.js"
+        "build": "NODE_ENV='production' node app.js",
+        "build:pm2": "pm2 deploy ecosystem.config.js production"
     },
     "dependencies": {
         "eslint": "^3.17.1",
