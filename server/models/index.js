@@ -11,7 +11,6 @@ let db = {}
 const dirNames = fs.readdirSync(__dirname)
 dirNames.filter(file => (file.includes('.') && (file !== 'index.js')))
   .forEach(file => {
-    console.log("file====="+file)
     let model = sequelize.import(path.join(__dirname, file))
     db[model.name] = model
   })
