@@ -6,14 +6,13 @@ const secret = require('./secret.js')
 exports.md5Pre = "!@#$%(*&^)"
 exports.secretServer = secret.secretServer
 exports.secretClient = secret.secretServer */
-const mysqlConfig = require('./mysql.conf')
 const env = process.env.NODE_ENV
 let password = ''
 console.log("process.platform: "+ process.platform)
 if (env === 'production') {
-  module.exports = require('./mysql.conf').prod
+  module.exports = require('./my.conf').prod
 } else {
-  module.exports = require('./mysql.conf').dev
+  module.exports = require('./my.conf').dev
 }
 
 // module.exports = {
