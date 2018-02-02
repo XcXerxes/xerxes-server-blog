@@ -3,6 +3,7 @@ const assertError = require('../utils/asserts')
 const db = require('../models')
 const moment = require("moment")
 const jwt = require("jsonwebtoken")
+const md5 = require('md5')
 
 // 验证secret 是否存在
 require('../utils').creatSecret()
@@ -45,7 +46,7 @@ exports.login = (req, res) => {
         }
     }).then(result => {
         if (result) {
-            if (result.password === password) {
+            if (result.password === md5(password)) {
                 console.log(moment().format('YYYY-MM-DD HH:mm:ss'))
                 db.admin.update({
                     updatedAt: new Date()
