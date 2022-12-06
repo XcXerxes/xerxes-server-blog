@@ -12,7 +12,7 @@
     },
     "dependencies": {
         "eslint": "^3.17.1",
-        "express": "^4.15.2",
+        "express": "^4.17.3",
         "highlight.js": "^9.10.0",
         "marked": "^0.3.6",
         "md5": "^2.2.1",
